@@ -83,6 +83,7 @@ _Sets = Sets.__classcall__(Sets)
 ## Factories for all structures
 class DPolynomialRingFactory(UniqueFactory):
     r'''
+        Testing_Git
         Factory to create a ring of polynomials over a ring with operators.
 
         This allows to cache the same rings created from different objects. See
