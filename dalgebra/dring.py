@@ -1258,6 +1258,21 @@ def DifferenceRing(base: CommutativeRing, *operators : Callable):
     return DRing(base, *operators, types=len(operators)*["homomorphism"])
 
 
+def SkewDerivationRing(base : CommutativeRing, *operators : Callable):
+    r'''
+        Method that calls the :class:`DRingFactory` with types always as "skew".
+
+        See documentation on :class:`DRingFactory` for further information.
+    '''
+    # checking the arguments
+    if len(operators) < 1:
+        logger.info("No operation is given: we set a zero derivative.")
+        operators = [lambda p : 0]
+    # elif len(operators) == 1 and isinstance(operators[0], Sequence):
+    #     operators = operators[0]
+
+    return DRing(base, *operators, types=len(operators)*["skew"])
+
 ####################################################################################################
 ###
 ### DEFINING THE ELEMENT AND PARENT FOR WRAPPED RINGS

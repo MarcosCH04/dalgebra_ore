@@ -71,7 +71,7 @@ from sage.symbolic.ring import SR
 
 from typing import Collection
 
-from ..dring import DRings, DFractionField, AdditiveMap, DifferentialRing, DifferenceRing
+from ..dring import DRings, DFractionField, AdditiveMap, DifferentialRing, DifferenceRing, SkewDerivationRing
 from .dmonoids import DMonomialMonoid, DMonomialGen, DMonomial, IndexBijection
 
 
@@ -142,7 +142,6 @@ def DifferentialPolynomialRing(base, *names : str, **kwds) -> DPolynomialRing_Mo
         raise TypeError("The base ring must be a differential ring")
     return DPolynomialRing(base, *names, **kwds)
 
-
 def DifferencePolynomialRing(base, *names : str, **kwds) -> DPolynomialRing_Monoid:
     if base not in _DRings:
         base = DifferenceRing(base, kwds.pop("difference", base.Hom(base).one()))
@@ -151,9 +150,11 @@ def DifferencePolynomialRing(base, *names : str, **kwds) -> DPolynomialRing_Mono
     return DPolynomialRing(base, *names, **kwds)
 
 def SkewPolynomialRing(base, *names : str, **kwds) -> DPolynomialRing_Monoid:
+    # Does it make sense to add a base skew?
     if base not in _DRings:
-        raise NotImplementedError("Skew DRing not yet implemented")
-    # TODO: check if it is twistable.
+        raise NotImplementedError)("Default skew not implemented")
+    if not base.is_skew():
+        raise TypeError("The base ring must be a skew ring")
     return DPolynomialRing(base, *names, **kwds)
 
 
@@ -2174,6 +2175,7 @@ class DPolynomialRing_Monoid(Parent):
             func = __extended_derivation
         elif ttype == "skew":
             raise NotImplementedError("The 'skew' case is not yet implemented")
+            # Must implement first the Monoid _skew_ derivation.
             # func = None
         else:
             raise ValueError(f"The type {ttype} is not recognized as a valid operator.")

@@ -334,6 +334,23 @@ class DMonomial(Element):
         return self._parent.element_class(self._parent, copy)
 
     @cached_method
+    def _skew_(self, operation: int = 0) -> DMonomial:
+        r'''
+            *TO BE TESTED*
+            Method to compute the (skew)-derivative of a monomial.
+
+            Due to the twisted-Leibniz rule, this is a sum, so we return a tuple of monomials that appear in the derivative with the coefficient.
+            This is valid for any skewed-derivation, since the differential variables do not concrete into any further operation.
+
+            EXAMPLES::
+            *TO BE ADDED*
+        '''
+        raise NotImplementedError("Skew derivative over monomials not yet implemented")
+        return tuple(result)
+
+
+
+    @cached_method
     def _inverse_(self, operation: int = 0) -> DMonomial:
         r'''
             Tries to get the previous element of an operation.
