@@ -49,7 +49,7 @@ r'''
     To avoid this behavior, we can set the types by providing an optional list called ``types`` whose elements are
     strings with values:
 
-    * ``homomorphism``: the operator is interpret as a homomorphism/shift/difference operator.
+    * ``homomorphism``: the operator is interpreted as a homomorphism/shift/difference operator.
     * ``derivation``: the operator is considered as a derivation.
     * ``skew``: the operator is considered as a skew-derivation.
     * ``none``: the operator will only be considered as an additive Map without further structure.
@@ -1223,7 +1223,7 @@ class DRingFactory(UniqueFactory):
 
 
 DRing = DRingFactory("dalgebra.dring.DRing")
-RingWithOperators = DRing #: alias fod DRing (used for backward-compatibility)
+RingWithOperators = DRing #: alias for DRing (used for backward-compatibility)
 
 
 def DifferentialRing(base : CommutativeRing, *operators : Callable):

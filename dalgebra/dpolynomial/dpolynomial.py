@@ -83,7 +83,6 @@ _Sets = Sets.__classcall__(Sets)
 ## Factories for all structures
 class DPolynomialRingFactory(UniqueFactory):
     r'''
-        Testing_Git
         Factory to create a ring of polynomials over a ring with operators.
 
         This allows to cache the same rings created from different objects. See
@@ -149,6 +148,12 @@ def DifferencePolynomialRing(base, *names : str, **kwds) -> DPolynomialRing_Mono
         base = DifferenceRing(base, kwds.pop("difference", base.Hom(base).one()))
     if not base.is_difference():
         raise TypeError("The base ring must be a difference ring")
+    return DPolynomialRing(base, *names, **kwds)
+
+def SkewPolynomialRing(base, *names : str, **kwds) -> DPolynomialRing_Monoid:
+    if base not in _DRings:
+        raise NotImplementedError("Skew DRing not yet implemented")
+    # TODO: check if it is twistable.
     return DPolynomialRing(base, *names, **kwds)
 
 
