@@ -360,13 +360,13 @@ class DMonomial(Element):
 
             Since shifts operations are homomorphisms, then the output is a DMonomial with shifted indices
         '''
-        copy = self._variables.copy()
+        copy = dict()
         for (v, o) in self._variables:
             od = list(o)
             od[operation] += 1
             od = tuple(od)
 
-            copy[(v,od)] = copy.pop((v,o))
+            copy[(v,od)] = self._variables[(v,o)]
 
         return self._parent.element_class(self._parent, copy)
 

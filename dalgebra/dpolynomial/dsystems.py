@@ -429,7 +429,10 @@ class DSystem:
 
     ## magic methods
     def __getitem__(self, index) -> DSystem:
-        return self.subsystem(index)
+        if index in ZZ:
+            return self.equation(index)
+        else:
+            return self.subsystem(index)
 
     def __repr__(self) -> str:
         return f"System over [{self.parent()}] with variables [{self.variables}]:\n\u007b\n\t" + "\n\t".join([f"{el} == 0" for el in self.equations()]) + "\n\u007d"
