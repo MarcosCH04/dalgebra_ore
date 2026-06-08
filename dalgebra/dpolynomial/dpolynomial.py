@@ -2268,8 +2268,25 @@ class DPolynomialRing_Monoid(Parent):
                 return self.__cache[operation][element]
             func = __extended_derivation
         elif ttype == "skew":
-            raise NotImplementedError("The 'skew' case is not yet implemented")
-            # func = None
+            def __extended_skewderivation(element : DPolynomial) -> DPolynomial:
+                element = self(element)
+
+                if (element in self.base()):
+                    return self(operator(self.base()(element)))
+                
+                if (element not in self.__cache[operation]):
+                    final_dict = dict()
+                    for (m,c) in element._content.items():
+                        # Assuming that all operators commute, the derivation acts the same.
+                        for nm, e in m._derivative_(operation):
+                            # Only one change due to twisting c.
+                            final_dict[nm] = final_dict.get(nm, self.base().zero()) + operator.twist(c)*e
+                        final_dict[m] = final_dict.get(m, self.base().zero()) + operator(c)
+
+                    self.__cache[operation][element] = self.element_class(self, final_dict)
+
+                return self.__cache[operation][element]
+            func = __extended_skewderivation
         else:
             raise ValueError(f"The type {ttype} is not recognized as a valid operator.")
 
