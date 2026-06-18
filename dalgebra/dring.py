@@ -198,13 +198,19 @@ class DRings(Category):
         `(R, (\sigma_1,\ldots,\sigma_n))`.
 
         This category defines the basic methods for these rings and their elements
+
+        ::NO EXAMPLE::
     '''
     ## Defining a super-category
     def super_categories(self):
+        r'''Method to generate the appropriate categories for a D-Ring (::NO EXAMPLE::)'''
         return [_Rings]
 
     ## Defining methods for the Parent structures of this category
     class ParentMethods: #pylint: disable=no-member
+        r'''
+            Method for the parent classes of a DRing. (::NO EXAMPLE::)
+        '''
         ##########################################################
         ### METHODS RELATED WITH THE OPERATORS
         ##########################################################
@@ -216,12 +222,16 @@ class DRings(Category):
 
                 These operators are maps from ``self`` to ``self`` that compute the application
                 of each operator over the elements of ``self``.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("Method 'operators' need to be implemented")
 
         def noperators(self) -> int:
             r'''
                 Method to get the number of operators defined over a ring
+
+                ::NO EXAMPLE::
             '''
             return len(self.operators())
 
@@ -288,6 +298,8 @@ class DRings(Category):
                 OUTPUT:
 
                 The result of applying the operators to ``element``.
+
+                ::NO EXAMPLE::
             '''
             result = element
             if _ordered:
@@ -313,10 +325,22 @@ class DRings(Category):
                 hinting for a bug or lack of implementation.
 
                 *NOTE*: the method allows both elements of ``self`` and elements in ``self.fraction_field()``.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("[inverse_operation] Inverses not implemented in general.")
 
         def symbolic_inverse_operation(self, element: Element, operator: int = None) -> Element:
+            r'''
+                Method to compute symbolically the inverse of an element given an operation.
+
+                This method (in contrast with :func:`inverse_operation`) can change the ring/field where the 
+                solution is searched in a controlled way. More precisely, thi method will create (if necessary) an extension
+                of all the operations in the field and compute an element such that the operation given in 
+                ``operation`` applied to this new element return ``element``.
+
+                ::NO EXAMPLE::
+            '''
             if self.noperators() == 0:
                 raise TypeError("Operators not defined for this ring.")
             elif operator is None and self.noperators() == 1:
@@ -350,6 +374,8 @@ class DRings(Category):
 
                 This method returns a tuple (sorted as the output of :func:`operators`) with the types of each of the
                 operators.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("Method 'operator_types' need to be implemented")
 
@@ -366,24 +392,26 @@ class DRings(Category):
                 Similarly, this class offers access to homomorphisms and skew derivations.
 
                 When no derivation is declared for a ring, an empty tuple is returned.
+
+                ::NO EXAMPLE::
             '''
             return tuple([operator for (operator, ttype) in zip(self.operators(), self.operator_types()) if ttype == "derivation"])
 
         def nderivations(self) -> int:
             r'''
-                Method to get the number of derivations defined over a ring
+                Method to get the number of derivations defined over a ring (::NO EXAMPLE::)
             '''
             return len(self.derivations())
 
         def has_derivations(self) -> bool:
             r'''
-                Method to know if there are derivations defined over the ring.
+                Method to know if there are derivations defined over the ring. (::NO EXAMPLE::)
             '''
             return self.nderivations() > 0
 
         def is_differential(self) -> bool:
             r'''
-                Method to check whether a ring is differential, i.e, all operators are derivations.
+                Method to check whether a ring is differential, i.e, all operators are derivations. (::NO EXAMPLE::)
             '''
             return self.noperators() == self.nderivations()
 
@@ -393,6 +421,8 @@ class DRings(Category):
 
                 This method applies a derivation over a given element in the same way an operator
                 is applied by the method :func:`~DRings.ParentMethods.operation`.
+
+                ::NO EXAMPLE::
             '''
             if self.nderivations() == 0:
                 raise TypeError("Derivations not defined for this ring.")
@@ -406,7 +436,7 @@ class DRings(Category):
         ### GENERIC METHODS FOR DIFFERENTIAL FIELDS INSPIRED FROM BRONSTEIN'S BOOK
         def integral(self, element: Element, derivation: int = None) -> Element:
             r'''
-                Computes the in-field integration
+                Computes the in-field integration (::NO EXAMPLE::)
             '''
             if self.nderivations() == 0:
                 raise TypeError("Derivations not defined for this ring.")
@@ -432,6 +462,8 @@ class DRings(Category):
                 Each type of D-ring must implement their way of extending the ring preserving this type of
                 properties. If not possible, they must raise a :class:`IntegrationError`. If the method will
                 be implemented (or has not been considered), the method will raise a :class:`NotImplementedError`.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Symbolic Integration method not implemented.")
 
@@ -450,6 +482,8 @@ class DRings(Category):
 
                 This method can return `True`, `False` if it can check whether the element is a logarithmic
                 derivative but it can not compute the element `u`. Otherwise it return the element `u`.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Logarithmic derivative method not yet implemented.")
 
@@ -463,6 +497,8 @@ class DRings(Category):
 
                 This method can return `True`, `False` if it can check whether the element is a logarithmic
                 derivative but it can not compute the element `u`. Otherwise it return the element `u`.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Logarithmic derivative method not yet implemented.")
 
@@ -479,6 +515,8 @@ class DRings(Category):
                     D(v) + fv = g.
 
                 When this solution does not exist, this method returns ``None``.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Method for Risch DE not implemented.")
 
@@ -498,6 +536,8 @@ class DRings(Category):
                     D(y) + f * y = \sum_{i=1}^n c_i g_i
 
                 **if and only if** `y = \sum_{j=1}^r d_j` and `A \cdot (c_1,\ldots,c_n,d_1,\ldots,d_j)^T = 0`
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"The Parametric Risch D.E. is not implemented")
 
@@ -509,6 +549,8 @@ class DRings(Category):
                 we can split `f` into a linear combination of `w_1,\ldots,w_n` and a total derivative for an element `v \in \mathbb{K}`.
 
                 This method return the element `v` and the constants `c_1,\ldots,c_n` if they exist or ``None`` if there is no such solution.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Method of limited integration not yet implemented")
 
@@ -524,6 +566,8 @@ class DRings(Category):
                     n f = \frac{D(v)}{v} + m\frac{D(l)}{l}.
 
                 If no such solution exist this method returns ``None``.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Method for parametric logarithmic derivative problem not implemented")
 
@@ -537,6 +581,8 @@ class DRings(Category):
                     \left\{\begin{array}{rl}c' + f_1 c - f_2 d &{}= g_1\\d' + f_2 c + f_1 d &{}= g_2\end{array}\right.`
 
                 If not possible to find such a solution, this method returns ``None``.
+
+                ::NO EXAMPLE::
             '''
             return self.coupled_de_system_generic(self, -1, f1, f2, g1, g2, D)
 
@@ -557,6 +603,8 @@ class DRings(Category):
                 with polynomial solutions in ``self`` with degree bounded by the argument `n`.
 
                 If no such solution exists, then this method returns ``None``.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError(f"Generic coupled DE System not yet implemented.")
 
@@ -573,24 +621,26 @@ class DRings(Category):
                 Similarly, this class offers access to derivations and skew derivations.
 
                 When no difference is declared for a ring, an empty tuple is returned.
+
+                ::NO EXAMPLE::
             '''
             return tuple([operator for (operator, ttype) in zip(self.operators(), self.operator_types()) if ttype == "homomorphism"])
 
         def ndifferences(self) -> int:
             r'''
-                Method to get the number of differences defined over a ring
+                Method to get the number of differences defined over a ring (::NO EXAMPLE::)
             '''
             return len(self.differences())
 
         def has_differences(self) -> bool:
             r'''
-                Method to know if there are differences defined over the ring.
+                Method to know if there are differences defined over the ring. (::NO EXAMPLE::)
             '''
             return self.ndifferences() > 0
 
         def is_difference(self) -> bool:
             r'''
-                Method to check whether a ring is difference, i.e, all operators are homomorphisms.
+                Method to check whether a ring is difference, i.e, all operators are homomorphisms. (::NO EXAMPLE::)
             '''
             return self.noperators() == self.ndifferences()
 
@@ -600,6 +650,8 @@ class DRings(Category):
 
                 This method applies a difference over a given element in the same way an operator
                 is applied by the method :func:`~DRings.ParentMethods.operation`.
+
+                ::NO EXAMPLE::
             '''
             if self.ndifferences() == 0:
                 raise TypeError("Differences not defined for this ring.")
@@ -611,25 +663,25 @@ class DRings(Category):
 
         def shifts(self) -> Sequence[Morphism]:
             r'''
-                Alias for :func:`~DRings.ParentMethods.differences`.
+                Alias for :func:`~DRings.ParentMethods.differences`. (::NO EXAMPLE::)
             '''
             return self.differences()
 
         def nshifts(self) -> Sequence[Morphism]:
             r'''
-                Alias for :func:`~DRings.ParentMethods.ndifferences`.
+                Alias for :func:`~DRings.ParentMethods.ndifferences`. (::NO EXAMPLE::)
             '''
             return self.ndifferences()
 
         def shift(self, element: Element, shift: int = None) -> Element:
             r'''
-                Alias for :func:`~DRings.ParentMethods.difference`.
+                Alias for :func:`~DRings.ParentMethods.difference`. (::NO EXAMPLE::)
             '''
             return self.difference(element, shift)
 
         def sum(self, element: Element, shift: int = None) -> Element:
             r'''
-                Computes the in-field sum
+                Computes the in-field sum (::NO EXAMPLE::)
             '''
             if self.nshifts() == 0:
                 raise TypeError("Differences not defined for this ring.")
@@ -655,6 +707,8 @@ class DRings(Category):
                 Each type of D-ring must implement their way of extending the ring preserving this type of
                 properties. If not possible, they must raise a :class:`IntegrationError`. If the method will
                 be implemented (or has not been considered), the method will raise a :class:`NotImplementedError`.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError
 
@@ -671,24 +725,26 @@ class DRings(Category):
                 Similarly, this class offers access to homomorphisms and derivations.
 
                 When no skew-derivation is declared for a ring, an empty tuple is returned.
+                
+                ::NO EXAMPLE::
             '''
             return tuple([operator for (operator, ttype) in zip(self.operators(), self.operator_types()) if ttype == "skew"])
 
         def nskews(self) -> int:
             r'''
-                Method to get the number of skew-derivations defined over a ring
+                Method to get the number of skew-derivations defined over a ring (::NO EXAMPLE::)
             '''
             return len(self.skews())
 
         def has_skews(self) -> bool:
             r'''
-                Method to know if there are skew-derivations defined over the ring.
+                Method to know if there are skew-derivations defined over the ring. (::NO EXAMPLE::)
             '''
             return self.ndifferences() > 0
 
         def is_skew(self) -> bool:
             r'''
-                Method to check whether a ring is skewed, i.e, all operators are skew-derivations.
+                Method to check whether a ring is skewed, i.e, all operators are skew-derivations. (::NO EXAMPLE::)
             '''
             return self.noperators() == self.nskews()
 
@@ -698,6 +754,8 @@ class DRings(Category):
 
                 This method applies a skew-derivation over a given element in the same way an operator
                 is applied by the method :func:`~DRings.ParentMethods.operation`.
+
+                ::NO EXAMPLE::
             '''
             if self.nskews() == 0:
                 raise TypeError("Skew-derivations not defined for this ring.")
@@ -710,7 +768,7 @@ class DRings(Category):
         ##########################################################
         ### LINEAR ALGEBRA METHODS
         ##########################################################
-        def system_for_constant_solutions(self, system):
+        def system_for_constant_solutions(self, system, homogeneous=True):
             r'''
                 Method that extends a linear system for computing constant solutions.
 
@@ -727,6 +785,8 @@ class DRings(Category):
 
                 A new matrix with coefficients in `C` fulfilling the desired condition,
                 and a list of enumerated monomials indicating the origin of each new equation.
+
+                ::NO EXAMPLE::
             '''
             logger.debug(f"[SFCS] Extending system for constant solutions:\n{system}")
             system = [[self(element) for element in row] for row in system]
@@ -762,11 +822,16 @@ class DRings(Category):
                 Method that computes the least common multiple of the denominators of a list of elements.
 
                 If not possible, the method will not be implemented.
+
+                ::NO EXAMPLE::
             '''
             elements = [self(element) for element in elements]
             return self._lcm_denominators(*elements)
 
         def _lcm_denominators(self, *_) -> DRings.ElementMethods:
+            r'''Auxiliary method for :func:`lcm_denominators` that actually computes the least common multiple of the denominators of a list of elements. (::NO EXAMPLE::)'''
+            if self.is_field():
+                return self.one()
             raise NotImplementedError(f"Method _lcm_denominators not yet implemented for {self.__class__}")
 
         ##########################################################
@@ -785,6 +850,8 @@ class DRings(Category):
 
                 This method is associated with the corresponding method
                 :func:`to_sage` on the elements.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("Method 'operator_ring' need to be implemented")
 
@@ -800,6 +867,8 @@ class DRings(Category):
                 This ring is the ring of linear operators over the ground ring.
 
                 This method return this new structure.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("Method 'operator_ring' need to be implemented")
 
@@ -824,6 +893,8 @@ class DRings(Category):
                 OUTPUT:
 
                 ``True`` if all the tests indicates the operators commute, ``False`` otherwise.
+
+                ::NO EXAMPLE::
             '''
             op1, op2 = self.operators()[op1], self.operators()[op2]
 
@@ -891,6 +962,8 @@ class DRings(Category):
                 * "derivation": the elements that goes to zero with the operator.
                 * "skew": the elements that goes to zero with the operator.
                 * "none": it makes no sense to talk about constant for these operators.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("Method 'constant_ring' not implemented")
 
@@ -900,11 +973,16 @@ class DRings(Category):
                 Method to add new constants (given by name) in a DRing.
 
                 This new constant acts as a transcendental element that is constant **for all** operations.
+
+                ::NO EXAMPLE::
             '''
             raise NotImplementedError("Method 'add_constants' not implemented")
 
     ## Defining methods for the Element structures of this category
     class ElementMethods: #pylint: disable=no-member
+        r'''
+            Method for the element classes of a DRing. (::NO EXAMPLE::)
+        '''
         ##########################################################
         ### APPLICATION METHODS
         ##########################################################
@@ -914,6 +992,8 @@ class DRings(Category):
 
                 This method applies repeatedly an operation defined in the parent of ``self``.
                 See :func:`~DRings.ParentMethods.operation` for further information.
+
+                ::NO EXAMPLE::
             '''
             if (times not in ZZ or times < 0):
                 raise ValueError("The argument ``times`` must be a non-negative integer")
@@ -926,6 +1006,7 @@ class DRings(Category):
                 return self.parent().operation(self.operation(operation=operation, times=times-1), operation)
 
         def operations(self, operations: list[int] | tuple[int], *, _ordered=False):
+            r'''Method to apply a list of operations to ``self`` in the order given by the list. (::NO EXAMPLE::)'''
             return self.parent().apply_operations(self, operations, _ordered=_ordered)
 
         def inverse_operation(self, operation: int = None, times : int = 1) -> Element:
@@ -934,6 +1015,8 @@ class DRings(Category):
 
                 This method applies repeatedly the inverse operation defined in the parent of ``self``.
                 See :func:`~DRings.ParentMethods.inverse_operation` for further information.
+
+                ::NO EXAMPLE::
             '''
             if (times not in ZZ or times < 0):
                 raise ValueError("The argument ``times`` must be a non-negative integer")
@@ -951,6 +1034,8 @@ class DRings(Category):
 
                 This method applies repeatedly a derivation defined in the parent of ``self``.
                 See :func:`~DRings.ParentMethods.derivative` for further information.
+
+                ::NO EXAMPLE::
             '''
             if (times not in ZZ or times < 0):
                 raise ValueError("The argument ``times`` must be a non-negative integer")
@@ -963,6 +1048,14 @@ class DRings(Category):
                 return self.parent().derivative(self.derivative(derivation=derivation, times=times-1), derivation)
 
         def integrate(self, derivation: int = None, times: int = 1) -> Element:
+            r'''
+                Apply an integral to ``self`` a given amount of times.
+
+                This method applies repeatedly an integral defined in the parent of ``self``.
+                See :func:`~DRings.ParentMethods.integrate` for further information.
+
+                ::NO EXAMPLE::
+            '''
             if (times not in ZZ or times < 0):
                 raise ValueError("The argument ``times`` must be a non-negative integer")
 
@@ -979,6 +1072,8 @@ class DRings(Category):
 
                 This method applies repeatedly a difference defined in the parent of ``self``.
                 See :func:`~DRings.ParentMethods.difference` for further information.
+
+                ::NO EXAMPLE::
             '''
             if (times not in ZZ or times < 0):
                 raise ValueError("The argument ``times`` must be a non-negative integer")
@@ -992,7 +1087,7 @@ class DRings(Category):
 
         def shift(self, shift: int = None, times: int = 1) -> Element:
             r'''
-                Alias for :func:`~DRings.ElementMethods.difference`.
+                Alias for :func:`~DRings.ElementMethods.difference`. (::NO EXAMPLE::)
             '''
             return self.difference(shift, times)
 
@@ -1002,6 +1097,8 @@ class DRings(Category):
 
                 This method applies repeatedly a difference defined in the parent of ``self``.
                 See :func:`~DRings.ParentMethods.skew` for further information.
+
+                ::NO EXAMPLE::
             '''
             if (times not in ZZ or times < 0):
                 raise ValueError("The argument ``times`` must be a non-negative integer")
@@ -1071,15 +1168,16 @@ class DRings(Category):
         ### OTHER METHODS
         ##########################################################
         def conditions_to_zero(self) -> list[tuple[Element,Element]]:
-            r'''Return a set of conditions so the element is zero when evaluating some parameters.'''
+            r'''Return a set of conditions so the element is zero when evaluating some parameters. (::NO EXAMPLE::)'''
             raise NotImplementedError(f"Method conditions_to_zero not yet implemented for {self.__class__}")
 
         def lcm_denominators(self, *other: DRings.ElementMethods) -> DRings.ElementMethods:
+            r'''Return the least common multiple of the denominators of ``self`` and ``other``. (::NO EXAMPLE::)'''
             return self.parent().lcm_denominators(self, *other)
 
         def to_sage(self):
             r'''
-                Transform ``self`` to a SageMath object (if possible) without any d-structure.
+                Transform ``self`` to a SageMath object (if possible) without any d-structure. (::NO EXAMPLE::)
             '''
             try:
                 return self.parent().to_sage()(self)
@@ -1088,6 +1186,7 @@ class DRings(Category):
 
     # methods that all morphisms involving differential rings must implement
     class MorphismMethods:
+        r'''Methods for morphisms involving differential rings. (::NO EXAMPLE::)'''
         pass
 
 
@@ -1127,8 +1226,11 @@ class DRingFactory(UniqueFactory):
         OUTPUT:
 
         A :class:`DRing_Wrapper` with the new d-ring.
+
+        ::NO EXAMPLE::
     '''
     def create_key(self, base : CommutativeRing, *operators : Callable, **kwds):
+        r'''Method to create a key for the factory of D-rings with operators. (::NO EXAMPLE::)'''
         # checking the arguments
         if len(operators) < 1:
             raise ValueError("At least one operator must be given.")
@@ -1179,6 +1281,7 @@ class DRingFactory(UniqueFactory):
                     raise TypeError(f"All operators must be callables. Found {operator}")
             elif ttype == "homomorphism":
                 def hom_from_callable(base, func):
+                    r'''Auxiliary method for the wrapping of a homomorphism from a callable element (::NO EXAMPLE::)'''
                     if base.ngens() > 0 and (1 not in base.gens()):
                         try:
                             base_map = hom_from_callable(base.base(), func)
@@ -1214,6 +1317,7 @@ class DRingFactory(UniqueFactory):
         return tuple([base, tuple(operators), tuple(types)])
 
     def create_object(self, _, key):
+        r'''Method to create an element from a key (::NO EXAMPLE::)'''
         base, operators, types = key
 
         if isinstance(base, FractionField_generic):
@@ -1231,6 +1335,8 @@ def DifferentialRing(base : CommutativeRing, *operators : Callable):
         Method that calls the :class:`DRingFactory` with types always as "derivation".
 
         See documentation on :class:`DRingFactory` for further information.
+
+        ::NO EXAMPLE::
     '''
     # checking the arguments
     if len(operators) < 1:
@@ -1247,6 +1353,8 @@ def DifferenceRing(base: CommutativeRing, *operators : Callable):
         Method that calls the :class:`DRingFactory` with types always as "homomorphism".
 
         See documentation on :class:`DRingFactory` for further information.
+
+        ::NO EXAMPLE::
     '''
     # checking the arguments
     if len(operators) < 1:
@@ -1264,6 +1372,14 @@ def DifferenceRing(base: CommutativeRing, *operators : Callable):
 ###
 ####################################################################################################
 class DRing_WrapperElement(Element):
+    r'''
+        Class for the elements of a wrapped ring. 
+
+        It implements the methods for a DRing element by preserving the operations of the wrapped element
+        and ensuring it behaves properly with other classes of :mod:`dalgebra`.
+
+        ::NO EXAMPLE::
+    '''
     def __init__(self, parent, element):
         if (not isinstance(parent, DRing_Wrapper)):
             raise TypeError("An element created from a non-wrapper parent")
@@ -1275,28 +1391,35 @@ class DRing_WrapperElement(Element):
 
     # Arithmetic methods
     def _add_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the addition operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped + x.wrapped)
     def _sub_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the subtraction operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped - x.wrapped)
     def __neg__(self) -> DRing_WrapperElement:
+        r'''Implementation of the negation operator for wrapped elements. (::NO EXAMPLE::)'''
         return self.parent().element_class(self.parent(), -self.wrapped)
     def _mul_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the multiplication operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped * x.wrapped)
     def _rmul_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the right multiplication operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped * x.wrapped)
     def _lmul_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the left multiplication operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped * x.wrapped)
     def _div_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the division operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         value = self.wrapped / x.wrapped
@@ -1305,22 +1428,27 @@ class DRing_WrapperElement(Element):
         else:
             return self.parent().fraction_field()._element_class(self.parent().fraction_field(), value.numerator(), value.denominator())
     def _floordiv_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the floor division operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped // x.wrapped)
     def _mod_(self, x) -> DRing_WrapperElement:
+        r'''Implementation of the modulo operator for wrapped elements. (::NO EXAMPLE::)'''
         if parent(x) != self.parent(): # this should not happened
             x = self.parent().element_class(self.parent(), self.parent().base()(x))
         return self.parent().element_class(self.parent(), self.wrapped % x.wrapped)
     def __pow__(self, n) -> DRing_WrapperElement:
+        r'''Implementation of the power operator for wrapped elements. (::NO EXAMPLE::)'''
         return self.parent().element_class(self.parent(), self.wrapped ** n)
     def __invert__(self) -> DRing_WrapperElement:
+        r'''Implementation of the inverse operator for wrapped elements. (::NO EXAMPLE::)'''
         value = ~self.wrapped
         if value in self.parent().wrapped:
             return self.parent().element_class(self.parent(), value)
         else:
             return self.parent().fraction_field().element_class(self.parent().fraction_field(), self.parent().one(), self)
     def __eq__(self, x) -> bool:
+        r'''Magic method for equality operator. (::NO EXAMPLE::)'''
         if x is None:
             return False
 
@@ -1334,10 +1462,14 @@ class DRing_WrapperElement(Element):
         else:
             return self.wrapped == x
 
-    def __ne__(self, x) -> bool: return not (self == x)
+    def __ne__(self, x) -> bool: 
+        r'''Magic method for inequality operator. (::NO EXAMPLE::)'''
+        return not (self == x)
+
 
     ## Other methods from rings and element
     def divides(self, other) -> bool:
+        r'''Method to check whether an element divides other. (::NO EXAMPLE::)'''
         if not hasattr(self.wrapped, "divides"):
             raise AttributeError(f"Attribute 'divides' not included in {self.wrapped.parent()}")
 
@@ -1346,6 +1478,7 @@ class DRing_WrapperElement(Element):
         return self.wrapped.divides(other.wrapped)
 
     def numerator(self):
+        r'''Method to get the numerator of an element. (::NO EXAMPLE::)'''
         try:
             numer = self.wrapped.numerator()
             if numer.parent() == self.parent().wrapped:
@@ -1356,6 +1489,7 @@ class DRing_WrapperElement(Element):
         except Exception as e:
             raise AttributeError(f"'numerator' not an attribute for {self.__class__}. Reason: {e}")
     def denominator(self):
+        r'''Method to get the denominator of an element. (::NO EXAMPLE::)'''
         try:
             denom = self.wrapped.denominator()
             if denom.parent() == self.parent().wrapped:
@@ -1367,9 +1501,11 @@ class DRing_WrapperElement(Element):
             raise AttributeError(f"'denominator' not an attribute for {self.__class__}. Reason: {e}")
 
     def _derivative(self, *args, **kwds): #pylint: disable=unused-argument
+        r'''Auxiliary method to actually compute the derivative of an element. (::NO EXAMPLE::)'''
         return DRings.ElementMethods.derivative(self)
 
     def gcd(self, other: DRing_WrapperElement) -> DRing_WrapperElement:
+        r'''Method to compute the GCD of two elements in a ring. It is based on the GCD method of the wrapped element. (::NO EXAMPLE::)'''
         try:
             other = self.parent()(other) # trying to cast other to be in ``self.parent()``
             g = self.wrapped.gcd(other.wrapped) # computing gcd in the wrapped level
@@ -1391,6 +1527,7 @@ class DRing_WrapperElement(Element):
             raise AttributeError(f"[DRing] Wrapped element {self.wrapped} do no have method `gcd`")
 
     def lcm(self, other):
+        r'''Method to compute the LCM of two elements in a ring. It is based on the LCM method of the wrapped element. (::NO EXAMPLE::)'''
         try:
             other = self.parent()(other)
             output = self.wrapped.lcm(other.wrapped)
@@ -1398,16 +1535,56 @@ class DRing_WrapperElement(Element):
         except AttributeError:
             raise AttributeError(f"[DRing] Wrapped element {self.wrapped} do no have method `lcm`")
 
-    def reduce_algebraic(self, polynomials):
-        if hasattr(self.wrapped, "reduce"):
-            return self.parent()(self.wrapped.reduce([self.parent().wrapped(el) for el in polynomials]))
-        return self
+    def reduce_algebraic(self, ideal) -> DRing_WrapperElement:
+        r'''
+            Method to reduce an element using algebraic constraints.
+
+            Given an ideal of some variables, this method try to reduce this element using the given algebraic structures.
+            It uses the :func:`sage.rings.polynomial.polynomial_ideal.PolynomialIdeal_generic.reduce` method of the wrapped element.
+            If the wrapped ring is not a polynomial ring with the given variables, the method tries to make the ideal and the wrapped
+            ring compatible.
+
+            ::NO EXAMPLE::
+        '''
+        from sage.rings.polynomial.term_order import TermOrder
+        R = ideal.ring()
+        S = self.parent().wrapped
+        if R != S:
+            if not isinstance(S, (PolynomialRing_generic, MPolynomialRing_base)):
+                raise ValueError(f"Reduction only implemented for ideals in the same ring or in a polynomial ring over it. Found {R} and {S}")
+                # logger.warning(f"Reduction only implemented for ideals in the same ring or in a polynomial ring over it. Found {R} and {S}")
+                # return self
+            ## Parent of self is a polynomial ring
+            ## We try to make a morphism based on variable names
+            vars_in_R = [str(v) for v in R.gens()]
+            vars_in_S = [str(v) for v in S.gens()]
+
+            if not all(var in vars_in_S for var in vars_in_R):
+                raise ValueError(f"Reduction only implemented for ideals in the same ring or in a polynomial ring over it. Found {R} and {S} with variables {vars_in_R} and {vars_in_S}")
+                # logger.warning(f"Reduction only implemented for ideals in the same ring or in a polynomial ring over it. Found {R} and {S} with variables {vars_in_R} and {vars_in_S}")
+                # return self
+
+            ## We now know that R is a subring of S. We need to build the order is S to make the reduction
+            extra = [el for el in vars_in_S if el not in vars_in_R]
+            T = PolynomialRing(S.base_ring(), 
+                               extra + vars_in_R, 
+                               order=TermOrder("deglex", len(extra))+R.term_order() if len(extra) > 0 else R.term_order()
+            )
+            output = S(ideal.change_ring(T).reduce(T(self.wrapped)))
+        else:
+            output = ideal.reduce(self.wrapped)
+        return self.parent()(output)
+
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        r'''Private method wrapping the corresponding for the wrapped ring (if possible) (::NO EXAMPLE::)'''
+        return self.wrapped._im_gens_(codomain, im_gens, base_map=base_map)
 
     def is_unit(self) -> bool:
+        r'''Overriden method for checking if an element is a unit (::NO EXAMPLE::)'''
         return self.wrapped.is_unit()
 
     def __getattr__(self, attr):
-        r'''Generic wrapping method for methods not by default in the category of ``self``'''
+        r'''Generic wrapping method for methods not by default in the category of ``self`` (::NO EXAMPLE::)'''
         if hasattr(self.wrapped, attr):
             el = getattr(self.wrapped, attr)
             try:
@@ -1418,6 +1595,7 @@ class DRing_WrapperElement(Element):
 
     ## Methods from DRings.ElementMethods
     def conditions_to_zero(self) -> list[tuple[Element,Element]]:
+        r'''Implementation of conditions to zero for a DRing_WrapperElement. (::NO EXAMPLE::)'''
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if isinstance(self.parent().wrapped, PolynomialRing_generic):
             return list(zip(reversed(self.wrapped.monomials()), self.wrapped.coefficients()))
@@ -1441,19 +1619,36 @@ class DRing_WrapperElement(Element):
 
     ## Other magic methods
     def __call__(self, *args, **kwds):
+        r'''
+            Magic method for calling. 
+            
+            It uses the __call__ method for the wrapped element. It guarantees the output to be in self.parent()
+            
+            ::NO EXAMPLE::
+        '''
         out = self.wrapped(*args, **kwds)
         if out in self.parent().wrapped:
             return self.parent()(out)
         return out
+    
     def __bool__(self) -> bool:
+        r'''Magic method for boolean evaluation. It uses the __bool__ method for the wrapped element. (::NO EXAMPLE::)'''
         return bool(self.wrapped)
+    
     def __hash__(self) -> int:
+        r'''Magic method for hashing. It uses the __hash__ method for the wrapped element. (::NO EXAMPLE::)'''
         return hash(self.wrapped)
+    
     def __str__(self) -> str:
+        r'''Magic method for string representation. It uses the __str__ method for the wrapped element. (::NO EXAMPLE::)'''
         return str(self.wrapped)
+    
     def __repr__(self) -> str:
+        r'''Magic method for representation. It uses the __repr__ method for the wrapped element. (::NO EXAMPLE::)'''
         return repr(self.wrapped)
+    
     def _latex_(self) -> str:
+        r'''Magic method for LaTeX representation. It uses the _latex_ method for the wrapped element. (::NO EXAMPLE::)'''
         return latex(self.wrapped)
 
 
@@ -1476,6 +1671,8 @@ class DRing_Wrapper(Parent):
         * ``types`` (optional): a list with the types (see :func:`DRings.ParentMethods.operator_types`
           for further information). If nothing is given, the list will be automatically computed.
         * ``category`` (optional): argument from the category framework to allow further flexibility.
+
+        ::NO EXAMPLE::
     '''
     Element = DRing_WrapperElement
 
@@ -1574,13 +1771,27 @@ class DRing_Wrapper(Parent):
         self.__constant = [None] * len(self.__operators)
 
     @property
-    def wrapped(self) -> CommutativeRing: return self.__wrapped
+    def wrapped(self) -> CommutativeRing: 
+        r'''Property to get the wrapped ring. (::NO EXAMPLE::)'''
+        return self.__wrapped
 
-    def operators(self) -> tuple[WrappedMap]: return self.__operators
+    def operators(self) -> tuple[WrappedMap]: 
+        r'''Method to get the list of operations in the wrapped ring. (::NO EXAMPLE::)'''
+        return self.__operators
 
-    def operator_types(self) -> tuple[str]: return self.__types
+    def operator_types(self) -> tuple[str]: 
+        r'''Method to get the types of the operations in the wrapped ring. (::NO EXAMPLE::)'''
+        return self.__types
 
     def add_constants(self, *new_constants: str) -> DRing_Wrapper:
+        r'''
+            Method to add new constants to a wrapped ring.
+
+            The method takes care of checking how to add the new constants with the following premise: we keep the type of
+            algebraic structure of the wrapped ring as much as possible.
+
+            ::NO EXAMPLE::    
+        '''
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         ## We first try to see if the wrapped ring/field was a polynomial ring or not
         if self.wrapped.is_field() and (isinstance(self.wrapped.base(), (PolynomialRing_generic, MPolynomialRing_base))):
@@ -1616,9 +1827,21 @@ class DRing_Wrapper(Parent):
                     operations.append(new_base.derivation(imgs_on_gens, twist=new_twist)) # extension by zero
             else:
                 raise TypeError("Impossible to create constants when they are not defined.")
-        return DRing(new_base, *operations, types=self.operator_types())
+
+        output = DRing(new_base, *operations, types=self.operator_types())
+        ## If possible, we set the constant ring of the new structure as the output of the previous constant ring
+        for i in range(self.noperators()):
+            try:
+                try:
+                    output.constant_ring(i)
+                except NotImplementedError: # Only if the constants are not automatic
+                    output.set_constant(self.constant_ring(i).add_constants(*new_constants), i)
+            except NotImplementedError: # If we can not extend, we do nothing
+                pass
+        return output
 
     def constant_ring(self, operation: int = 0) -> Parent:
+        r'''Returns the ring of constants for a given operation. (::NO EXAMPLE::)'''
         if self.__constant[operation] is None:
             operation_type = self.operator_types()[operation]
             if operation_type == "homomorphism":
@@ -1637,9 +1860,18 @@ class DRing_Wrapper(Parent):
         return self.__constant[operation]
 
     def set_constant(self, ring: Parent, operation: int = 0):
+        r'''
+            Method that allows to set a new ring or field as a set of constants for a given operation. 
+
+            WARNING: This method does not check the coherence of the data provided. This method should only be used
+            when the user if completely sure of its actual meaning.
+
+            ::NO EXAMPLE::    
+        '''
         self.__constant[operation] = ring
 
     def _lcm_denominators(self, *_: DRing_WrapperElement) -> DRing_WrapperElement:
+        r'''Auxiliry implementation of the method for computing the LCM of a set of elements. (::NO EXAMPLE::)'''
         return self.one()
 
     def linear_operator_ring(self):
@@ -1709,7 +1941,9 @@ class DRing_Wrapper(Parent):
             base_ring = self.wrapped
 
             operators = []
-            def zero(_): return 0
+            def zero(_): 
+                r'''Zero function (::NO EXAMPLE::)'''
+                return 0
             for operator, ttype in zip(self.operators(), self.operator_types()):
                 if ttype == "homomorphism":
                     operators.append((f"S{f'_{self.differences().index(operator)}' if self.ndifferences() > 1 else ''}", operator.function, zero))
@@ -1722,16 +1956,22 @@ class DRing_Wrapper(Parent):
         return self.__linear_operator_ring
 
     def to_sage(self):
+        r'''Implementation of to_sage method. (::NO EXAMPLE::)'''
         ## No need to create the conversion morphism because they already exist
         return self.wrapped
 
-    def is_integral_domain(self, proof: bool = False) -> bool: return self.wrapped.is_integral_domain(proof=proof)
+    def is_integral_domain(self, proof: bool = False) -> bool: 
+        r'''Checks whether a ring is an integral domain or not. (::NO EXAMPLE::)'''
+        return self.wrapped.is_integral_domain(proof=proof)
 
-    def is_field(self, proof: bool = False) -> bool: return self.wrapped.is_field(proof=proof)
+    def is_field(self, proof: bool = False) -> bool: 
+        r'''Checks whether a ring is a field or not. (::NO EXAMPLE::)'''
+        return self.wrapped.is_field(proof=proof)
 
     #######################################################################################
     ### GENERIC METHODS FOR DIFFERENTIAL FIELDS INSPIRED FROM BRONSTEIN'S BOOK
     def inverse_operation(self, element: DRing_WrapperElement, operator: int = None) -> DRing_WrapperElement:
+        r'''Implementation of symbolic integration/summation for a given operation. (::NO EXAMPLE::)'''
         if self.operator_types()[operator] == "homomorphism":
             try:
                 return self.element_class(self, self.operators()[operator].function.inverse()(element.wrapped))
@@ -1747,6 +1987,7 @@ class DRing_Wrapper(Parent):
 
     ### CHAPTER 6: Risch Differential Equation
     def risch_de(self, f: DFractionFieldElement, g: DFractionFieldElement, D:int = 0) -> DFractionFieldElement:
+        r'''Implementation of the Risch Diff. Equation for a wrapped ring/field. (::NO EXAMPLE::)'''
         ## Solving the Risch Differential Equation for all constant elements
         if self.operator_types()[D] == "derivation":
             if self.operators()[D].function.function == 0: # all are constants
@@ -1758,6 +1999,7 @@ class DRing_Wrapper(Parent):
 
     ### CHAPTER 7: Parametric Problems
     def risch_de_param(self, f: DFractionField, *g: DFractionFieldElement, D:int = 0) -> tuple[tuple[DFractionFieldElement], Matrix]:## Solving the Limited Integration Problem for all constant elements
+        r'''Implementation of the parametric Risch Diff. Equation for a wrapped ring/field (::NO EXAMPLE::)'''
         if self.operator_types()[D] == "derivation":
             if self.operators()[D].function.function == 0: # all are constants
                 ### When all elements are constants the differential equation gets reduced to a normal linear equation
@@ -1773,6 +2015,7 @@ class DRing_Wrapper(Parent):
         raise TypeError(f"Limited Integration Problem only defined for the differential case.")
 
     def limited_integrate(self, f: DFractionFieldElement , *w: DFractionFieldElement, D: int = 0) -> tuple[DRings.ElementMethods, tuple[DRings.ElementMethods]]:
+        r'''Implementation of the limited integration problem for a wrapped ring/field. (::NO EXAMPLE::)'''
         ## Solving the Limited Integration Problem for all constant elements
         if self.operator_types()[D] == "derivation":
             if self.operators()[D].function.function == 0: # all are constants
@@ -1784,6 +2027,7 @@ class DRing_Wrapper(Parent):
         raise TypeError(f"Limited Integration Problem only defined for the differential case.")
 
     def log_derivative_rad_param(self, f: DFractionFieldElement, l: DFractionFieldElement, D: int = 0) -> tuple[DFractionFieldElement, int, int]:
+        r'''Method to solve the parametric logarithmic derivative of a radical problem for a wrapped ring/field. (::NO EXAMPLE::)'''
         Dl_l = self(l.derivative(D)/l)
         if f == 0: # 1*0 = D(1)/1 + 0*D(l)/l
             return (self.one(), self.one(), self.zero())
@@ -1801,6 +2045,7 @@ class DRing_Wrapper(Parent):
                                 D: int = 0, # derivative we are integrating
                                 n: int = uoo # bound for degree of solutions
     ) -> tuple[DRings.ElementMethods, DRings.ElementMethods]:
+        r'''Solves a couple differential system with given coefficients over the given wrapped ring/field (::NO EXAMPLE::)'''
         ## Solving the Coupled D.E. System for all constant elements
         if self.operator_types()[D] == "derivation":
             if self.operators()[D].function.function == 0: # all are constants
@@ -1816,13 +2061,14 @@ class DRing_Wrapper(Parent):
 
     ## Coercion methods
     def _coerce_map_from_(self, S):
+        r'''Implementation of coercion map for another parent (::NO EXAMPLE::)'''
         if isinstance(S, DRing_Wrapper):
-            return self._coerce_map_from_(S.wrapped) ## TODO: WARNING: THIS DOES NOT CHECK FOR CORRECTNESS IN OPERATIONS
+            return self._coerce_map_from_(S.wrapped) ## TODO (unassigned): WARNING: THIS DOES NOT CHECK FOR CORRECTNESS IN OPERATIONS
         return self.wrapped == S or self.wrapped._coerce_map_from_(S) is not None
 
     def _element_constructor_(self, x) -> DRing_WrapperElement:
         r'''
-            Extended definition of :func:`_element_constructor_`.
+            Extended definition of :func:`_element_constructor_`. (::NO EXAMPLE::)
         '''
         if parent(x) is SR: # The case of a symbolic expression ("x in SR" is too generic)
             x = str(x)
@@ -1832,12 +2078,15 @@ class DRing_Wrapper(Parent):
         return self.element_class(self, self.wrapped(x))
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
+        r'''Reimplementation of the wrapped method _is_valid_homomorphism_. (::NO EXAMPLE::)'''
         return self.wrapped._is_valid_homomorphism_(codomain, im_gens, base_map)
 
     def construction(self) -> DRingFunctor:
+        r'''Returns the construction functor to build this wrapped ring (::NO EXAMPLE::)'''
         return DRingFunctor([operator.function for operator in self.operators()], self.operator_types()), self.wrapped
 
     def _pushout_(self, other):
+        r'''Auxiliary implementation of the pushout for wrapped rings (::NO EXAMPLE::)'''
         try:
             hash(other)
             hashable = True
@@ -1870,8 +2119,63 @@ class DRing_Wrapper(Parent):
             return self.__cached_pushouts[other]
         return None
 
+    @cached_method
+    def _polynomial_ring(self, *gens: str | DRing_WrapperElement) -> DRing_Wrapper:
+        r'''Auxiliary method for :func:`polynomial_ring`. (::NO EXAMPLE::)'''
+        if not isinstance(self.wrapped, (PolynomialRing_generic, MPolynomialRing_base)):
+            raise TypeError(f"Polynomial ring structure only implemented when the wrapped ring is a polynomial ring. Found {self.wrapped}")
+        elif any(any(not self(g).d_constant(i) for i in range(self.noperators())) for g in gens):
+            raise ValueError(f"All the provided generators must be constants for all the operators. Found {gens}")
+        
+        varnames = [str(g) for g in self.gens()]
+        gens = [str(g) for g in gens]
+
+        if any(g not in varnames for g in gens):
+            raise ValueError(f"All the provided generators must be among the generators of the wrapped ring. Found {gens} and {varnames}")
+        
+        rem_varnames = [v for v in varnames if v not in gens]
+
+        if len(rem_varnames) == 0:
+            return self
+
+        base_ring = PolynomialRing(self.wrapped.base(), rem_varnames).fraction_field()
+        ring = PolynomialRing(base_ring, gens)
+        operator_imgs = [[self(gen).operation(i) for gen in gens] for i in range(self.noperators())]
+        return DRing(ring, *operator_imgs, types=self.operator_types())
+
+    @cached_method
+    def polynomial_ring(self, *gens: str | DRing_WrapperElement) -> DRing_Wrapper:
+        r'''
+            Method to create a polynomial ring structure based on the generators provided, keeping other generators as base elements.
+
+            NOTE: this method only works when the wrapped ring is a polynomial ring and the non-provided generators are constants for all the operators.
+
+            ::NO EXAMPLE::
+        '''
+        ring = self._polynomial_ring(*gens)
+
+        ## Setting if possible the ring of constants
+        for i in range(self.noperators()):
+            try:
+                old_constant = self.constant_ring(i)
+                if old_constant != self:
+                    cgens = [gen for gen in gens if self(gen).d_constant(i)]
+                    ring.set_constant(old_constant.polynomial_ring(*cgens), i)
+                else:
+                    ring.set_constant(ring, i)
+            except (NotImplementedError, TypeError, ValueError):
+                pass
+
+        ## Creating coercion between the two rings
+        if ring != self:
+            ring.register_coercion(DRing_Wrapper_ToPolyRingMorphism(self, *gens))
+            self.register_coercion(DRing_Wrapper_FromPolyRingMorphism(self, *gens))
+
+        return ring
+        
     # Rings methods
     def fraction_field(self):
+        r'''Builds the fraction field of a wrapped ring/field. (::NO EXAMPLE::)'''
         try:
             if self.wrapped.is_field():
                 return self
@@ -1883,19 +2187,23 @@ class DRing_Wrapper(Parent):
         return self.__fraction_field
 
     def characteristic(self) -> int:
+        r'''Returns the characteristic of the wrapped ring. (::NO EXAMPLE::)'''
         return self.wrapped.characteristic()
 
     def gens(self) -> tuple[DRing_WrapperElement]:
+        r'''Returns the generators of the wrapped ring. (::NO EXAMPLE::)'''
         return tuple([self.element_class(self, gen) for gen in self.wrapped.gens()])
 
     def ngens(self) -> int:
+        r'''Returns the number of generators of the wrapped ring. (::NO EXAMPLE::)'''
         return self.wrapped.ngens()
 
     def gen(self, i: int) -> DRing_WrapperElement:
+        r'''Returns the i-th generator of the wrapped ring. (::NO EXAMPLE::)'''
         return self.gens()[i]
 
     def __getattr__(self, attr):
-        r'''Generic wrapping method for methods not by default in the category of ``self``'''
+        r'''Generic wrapping method for methods not by default in the category of ``self`` (::NO EXAMPLE::)'''
         if hasattr(self.wrapped, attr):
             el = getattr(self.wrapped, attr)
             if el in self.wrapped:
@@ -1905,13 +2213,16 @@ class DRing_Wrapper(Parent):
 
     ## Representation methods
     def __repr__(self) -> str:
+        r'''Magic method to represent the wrapped ring. (::NO EXAMPLE::)'''
         begin = "Differential " if self.is_differential() else "Difference " if self.is_difference() else ""
         return f"{begin}Ring [[{self.wrapped}], {repr(self.operators())}]"
 
     def __str__(self) -> str:
+        r'''Magic method to represent the wrapped ring. (::NO EXAMPLE::)'''
         return repr(self)
 
     def _latex_(self) -> str:
+        r'''Magic method to represent the wrapped ring in LaTeX. (::NO EXAMPLE::)'''
         return "".join((
             r"\left(",
             latex(self.wrapped),
@@ -1952,12 +2263,15 @@ class DRing_Wrapper(Parent):
             Creates a random element in this ring.
 
             This method creates a random element in the base ring and cast it into an element of ``self``.
+
+            ::NO EXAMPLE::
         '''
         p = self.wrapped.random_element(*args,**kwds)
         return self.element_class(self, p)
 
 
 def is_WrappedDRing(parent: Parent) -> bool:
+    r'''Checker for the type of wrapped ring. (::NO EXAMPLE::)'''
     return isinstance(parent, DRing_Wrapper)
 
 
@@ -1967,17 +2281,28 @@ def is_WrappedDRing(parent: Parent) -> bool:
 ###
 ####################################################################################################
 class DFractionFieldElement(FractionFieldElement):
+    r'''
+        Class for a generic field of fractions element with d-operations. 
+        
+        It extends the SageMath class for a field of fractions including the basic operations for a d-ring.
+
+        ::NO EXAMPLE::
+    '''
     def __init__(self, parent, numerator, denominator=1,
                  coerce: bool = True, reduce: bool = True):
         super().__init__(parent, numerator, denominator, coerce=coerce, reduce=reduce)
 
     def derivative(self, derivation: int = None, times: int = 1):
-        r'''Overridden method to force the use of the DRings structure'''
+        r'''Overridden method to force the use of the DRings structure (::NO EXAMPLE::)'''
         return DRings.ElementMethods.derivative(self, derivation, times)
 
     def reduce(self):
+        r'''Overridden method for ``reduce`` to simplify the fraction. (::NO EXAMPLE::)'''
         n = self.numerator()
         d = self.denominator()
+        if n.is_unit() or d.is_unit(): # nothing to do
+            return
+        
         try:
             from sage.arith.misc import GCD
             g = GCD(n,d)
@@ -1989,20 +2314,21 @@ class DFractionFieldElement(FractionFieldElement):
         self.__init__(self.parent(), n, d, coerce=False, reduce=False)
 
     def _add_(self, other: DFractionFieldElement) -> DFractionFieldElement:
-        r'''Overridden method to force the use of the DRings structure'''
+        r'''Overridden method to force the use of the DRings structure (::NO EXAMPLE::)'''
         prev = super()._add_(other)
         prev.reduce()
         return prev
 
     def _mul_(self, other: DFractionFieldElement) -> DFractionFieldElement:
-        r'''Overridden method to force the use of the DRings structure'''
+        r'''Overridden method to force the use of the DRings structure (::NO EXAMPLE::)'''
         prev = super()._mul_(other)
         prev.reduce()
         return prev
 
-    def reduce_algebraic(self, polynomials):
-        num = self.numerator().reduce_algebraic(polynomials)
-        den = self.denominator().reduce_algebraic(polynomials)
+    def reduce_algebraic(self, ideal):
+        r'''Included version of ``reduce_algebraic`` to simplify the fraction with respect to an ideal. (::NO EXAMPLE::)'''
+        num = self.numerator().reduce_algebraic(ideal)
+        den = self.denominator().reduce_algebraic(ideal)
 
         if den != 0:
             return num/den
@@ -2010,12 +2336,14 @@ class DFractionFieldElement(FractionFieldElement):
         raise ZeroDivisionError(f"Found a reduction to zero on the denominator")
 
     def variables(self):
+        r'''Returns the variables in the fraction. (::NO EXAMPLE::)'''
         try:
             return tuple(set(self.numerator().variables()).union(set(self.denominator().variables())))
         except AttributeError:
             raise AttributeError("'DFractionFieldElement' object has no attribute 'variables'")
         
     def __hash__(self) -> int:
+        r'''Overridden method to compute the hash of a fraction. (::NO EXAMPLE::)'''
         hn, hd = hash(self.numerator()), hash(self.denominator())
         if self.denominator() == 1:
             return hn
@@ -2023,6 +2351,7 @@ class DFractionFieldElement(FractionFieldElement):
 
     ## Methods from DRings.ElementMethods
     def conditions_to_zero(self) -> list[tuple[Element,Element]]:
+        r'''Method to compute the conditions for a fraction to be zero. (::NO EXAMPLE::)'''
         return self.numerator().conditions_to_zero()
 
 
@@ -2047,6 +2376,8 @@ class DFractionField(FractionField_generic):
         * :func:`DRings.parent_class.operators`
         * :func:`DRings.parent_class.operator_types`
         * :func:`DRings.parent_class.constant_ring`: it tries to compute the field of fractions of the base ring
+
+        ::NO EXAMPLE::
     '''
     def __init__(self, R, element_class=DFractionFieldElement, category=(_DRings & _QuotientFields)):
         ## Checking ``R`` is appropriate
@@ -2071,6 +2402,7 @@ class DFractionField(FractionField_generic):
 
     @staticmethod
     def flatten_fraction_field(field) -> tuple[Parent, bool]:
+        r'''Static method to flatten the polynomials in its base ring if possible. (::NO EXAMPLE::)'''
         if isinstance(field, FractionField_generic): # self is Fr(R)
             if isinstance(field.base(), (PolynomialRing_generic, MPolynomialRing_base)): # R is a polynomial ring
                 recursion, frac_over_poly = DFractionField.flatten_fraction_field(field.base().base())
@@ -2087,29 +2419,37 @@ class DFractionField(FractionField_generic):
     ### Methods from DRings.ParentMethods
     #################################################################################################
     def operators(self) -> Sequence[AdditiveMap]:
+        r'''Returns the list of operations of the field of fractions (::NO EXAMPLE::)'''
         return self.__operators
 
     def operator_types(self) -> Sequence[str]:
+        r'''Returns the list of types of operations of the field of fractions (::NO EXAMPLE::)'''
         return self.base().operator_types()
 
     def constant_ring(self, operation: int = 0) -> Parent:
+        r'''Return the field of constants for this field of fractions. It always tries to compute the field of fractions 
+        of the base ring. (::NO EXAMPLE::)'''
         try:
             return self.base().constant_ring(operation).fraction_field()
         except Exception as e:
             raise e
 
     def add_constants(self, *new_constants: str) -> DFractionField:
+        r'''Method to add constants to this field of fractions. (::NO EXAMPLE::)'''
         return self.base().add_constants(*new_constants).fraction_field()
 
     def _lcm_denominators(self, *elements: DFractionFieldElement):
+        r'''Auxiliary method to compute the LCM of the denominators of fractions. (::NO EXAMPLE::)'''
         from sage.arith.functions import lcm
         return lcm(element.denominator() for element in elements)
 
     def inverse_operation(self, element, operator: int = 0):
+        r'''Applies the inverse operation to an element. (::NO EXAMPLE::)'''
         return self.base().inverse_operation(element, operator)
 
     @cached_method
     def to_sage(self):
+        r'''Implementation of method to_sage (::NO EXAMPLE::)'''
         output = self.base().to_sage().fraction_field()
         output, _ = DFractionField.flatten_fraction_field(output)
         return output
@@ -2120,6 +2460,8 @@ class DFractionField(FractionField_generic):
     def gen(self, i: int = 0) -> DFractionFieldElement:
         r'''
             Overridden method to return the i-th generator of the field of fractions to ensure coercion.
+
+            ::NO EXAMPLE::
         '''
         x = self._R.gen(i)
         one = self._R.one()
@@ -2133,6 +2475,18 @@ class DFractionField(FractionField_generic):
 ###
 ####################################################################################################
 class DRingFunctor(ConstructionFunctor):
+    r'''
+        Construction functor for a D-Ring. 
+
+        This functor takes a ring without differential/difference structure and adds it in a very specific way.
+
+        INPUT:
+
+        * ``operators``: sequence of operations to add to a ring.
+        * ``types``: types of the operations to add to a ring.
+
+        ::NO EXAMPLE::
+    '''
     def __init__(self, operators: Sequence[Morphism], types: Sequence[str]):
         if len(operators) != len(types):
             raise ValueError("The length of the operators and types must coincide.")
@@ -2144,14 +2498,20 @@ class DRingFunctor(ConstructionFunctor):
 
     ### Methods to implement
     def _apply_functor(self, x):
+        r'''Method that apply the functor to a ring. (::NO EXAMPLE::)'''
         return DRing(x, *self.__operators, types=self.__types)
 
     def _repr_(self):
+        r'''Magic method to represent the functor. (::NO EXAMPLE::)'''
         return f"DRing(*,{self.__operators}])"
 
     def __eq__(self, other) -> bool:
+        r'''Magic method to compare two functors. (::NO EXAMPLE::)'''
         return self.__class__ == other.__class__ and self.__operators == other.__operators and self.__types == other.__types
-    def __ne__(self, other) -> bool: return not (self == other)
+    
+    def __ne__(self, other) -> bool: 
+        r'''Magic method to check inequality two functors. (::NO EXAMPLE::)'''
+        return not (self == other)
 
     def __merge_skews(self, f: SkewMap, g: SkewMap):
         r'''
@@ -2168,6 +2528,8 @@ class DRingFunctor(ConstructionFunctor):
             3. We compute `df` and `dg`restricted to `S` by getting its representation over its generators.
             4. We check equality on the two restricted derivations.
             5. If they coincide, then we return the functor with the corresponding derivation.
+
+            ::NO EXAMPLE::
         '''
         Mf, Mg = f.function.parent(), g.function.parent()
         # we try to merge the base ring of the modules
@@ -2198,6 +2560,7 @@ class DRingFunctor(ConstructionFunctor):
         return None
 
     def __merge_homomorphism(self, f, g):
+        r'''Method that merges two homomorphisms to a bigger domain. (::NO EXAMPLE::)'''
         Mf, Mg = f.parent(), g.parent()
         # we try to merge the base ring of the modules
         R = pushout(Mf.domain(), Mg.domain())
@@ -2216,6 +2579,7 @@ class DRingFunctor(ConstructionFunctor):
         return df if df == dg else None
 
     def merge(self, other):
+        r'''General merging operation between functors (::NO EXAMPLE::)'''
         if isinstance(other, DRingFunctor):
             # we create a copy of the operators of self
             new_operators = [el for el in self.__operators]
@@ -2251,9 +2615,13 @@ class DRingFunctor(ConstructionFunctor):
         return None # Following definition of merge in ConstructionFunctor
 
     @property
-    def operators(self) -> Sequence[Morphism]: return self.__operators
+    def operators(self) -> Sequence[Morphism]: 
+        r'''Property to return the operations that the functor adds. (::NO EXAMPLE::)'''
+        return self.__operators
     @property
-    def types(self): return self.__types
+    def types(self): 
+        r'''Property to return the types of the operations that the functor adds. (::NO EXAMPLE::)'''
+        return self.__types
 
 
 class DRing_Wrapper_SimpleMorphism(Morphism):
@@ -2262,13 +2630,48 @@ class DRing_Wrapper_SimpleMorphism(Morphism):
 
         This map allows the coercion system to detect that some elements in a
         :class:`DRing_Wrapper` are included in simpler rings.
+
+        ::NO EXAMPLE::
     '''
     def __init__(self, domain, codomain):
         super().__init__(domain, codomain)
 
     def _call_(self, p):
+        r'''Method to apply the morphism (::NO EXAMPLE::)'''
         return self.codomain()(p.wrapped)
 
+
+class DRing_Wrapper_ToPolyRingMorphism(Morphism):
+    r'''
+        Class for morphism from wrappers of normal rings to a polynomial ring.
+
+        ::NO EXAMPLE::
+    '''
+    def __init__(self, domain, *gens: str | DRing_WrapperElement):
+        super().__init__(domain, domain._polynomial_ring(*gens))
+
+    def _call_(self, element: DRing_WrapperElement) -> DRing_WrapperElement:
+        r'''Method to apply the morphism (::NO EXAMPLE::)'''
+        wrapped_codomain = self.codomain().wrapped
+        dict_to_codomain = {str(g): wrapped_codomain(str(g)) for g in self.domain().gens()}
+
+        return self.codomain()(element.wrapped(**dict_to_codomain))
+    
+class DRing_Wrapper_FromPolyRingMorphism(Morphism):
+    r'''
+        Class for morphism from polynomial rings to wrappers of normal rings.
+
+        ::NO EXAMPLE::
+    '''
+    def __init__(self, codomain, *gens: str | DRing_WrapperElement):
+        super().__init__(codomain._polynomial_ring(*gens), codomain)
+
+    def _call_(self, element: DRing_WrapperElement) -> DRing_WrapperElement:
+        r'''Method to apply the morphism (::NO EXAMPLE::)'''
+        wrapped_codomain = self.codomain().wrapped
+        dict_to_codomain = {str(g): wrapped_codomain(str(g)) for g in self.codomain().gens()}
+
+        return self.codomain()(element.wrapped(**dict_to_codomain))
 
 ####################################################################################################
 ###
@@ -2276,6 +2679,11 @@ class DRing_Wrapper_SimpleMorphism(Morphism):
 ###
 ####################################################################################################
 class AdditiveMap(SetMorphism):
+    r'''
+        Class representing a general type of morphism that is an additive homomorphism.
+
+        ::NO EXAMPLE::
+    '''
     def __init__(self, domain : Parent, function : Callable):
         # We create the appropriate Hom set
         hom = domain.Hom(domain, category=_CommutativeAdditiveGroups)
@@ -2283,23 +2691,42 @@ class AdditiveMap(SetMorphism):
         super().__init__(hom, function)
 
     def __str__(self) -> str:
+        r'''Magic method to represent the additive map. (::NO EXAMPLE::)'''
         return f"Additive Map [{repr(self)}]\n\t- From: {self.domain()}\n\t- To  : {self.codomain()}"
 
     def __repr__(self) -> str:
+        r'''Magic method to represent the additive map. (::NO EXAMPLE::)'''
         return f"{repr(self.function)}"
 
     def _latex_(self) -> str:
+        r'''Magic method to represent the additive map in LaTeX. (::NO EXAMPLE::)'''
         return latex(self.function)
 
     def __eq__(self, other) -> bool:
+        r'''Magic method to compare two additive maps. (::NO EXAMPLE::)'''
         return isinstance(other, AdditiveMap) and self.domain() == other.domain() and self.function == other.function
-    def __ne__(self, other) -> bool: return not (self == other)
+    def __ne__(self, other) -> bool: 
+        r'''Magic method to check inequality two additive maps. (::NO EXAMPLE::)'''
+        return not (self == other)
 
     def __hash__(self) -> int:
+        r'''Magic method to compute the hash of an additive map. (::NO EXAMPLE::)'''
         return self.function.__hash__()
 
 
 class SkewMap(AdditiveMap):
+    r'''
+        Class representing a type of additive morphism: a skew-derivation.
+
+        Given `R` a ring, and `\sigma: R \rightarrow R` a ring homomorphism. A skew derivation by `\sigma` 
+        (or a `\sigma`-derivation) is an additive map `\delta: R \rightarrow R` such that for all `a, b \in R`:
+
+        .. MATH::
+
+            \delta(ab) = \delta(a)b + \sigma(a)\delta(b).
+
+        ::NO EXAMPLE::
+    '''
     def __init__(self, domain : Parent, twist : Morphism, function : Callable):
         if isinstance(domain, QuotientRing_generic): # this do not have derivation modules
             if twist != domain.Hom(domain).one():
@@ -2325,18 +2752,35 @@ class SkewMap(AdditiveMap):
         super().__init__(domain, new_function)
 
     def __str__(self) -> str:
+        r'''Magic method to represent the skew derivation. (::NO EXAMPLE::)'''
         return f"Skew Derivation [{repr(self)}] over (({self.domain()}))"
 
 
 class DerivationMap(SkewMap):
+    r'''
+        Class representing a type of additive morphism: a derivation.
+
+        A derivation is a particular type of :class:`SkewMap` where the twist is the identity homomorphism.
+        This is the classical case for a usual derivation and it leads to the Leibniz derivation rule, i.e.:
+
+        .. MATH::
+
+            \delta(ab) = \delta(a)b + a\delta(b).
+
+        ::NO EXAMPLE::
+    '''
     def __init__(self, domain, function : Callable):
         super().__init__(domain, domain.Hom(domain).one(), function)
 
     def __str__(self) -> str:
+        r'''Magic method to represent the derivation. (::NO EXAMPLE::)'''
         return f"Derivation [{repr(self)}] over (({self.domain()}))"
 
 
 class WrappedMap(AdditiveMap):
+    r'''
+        Class that wraps a map over a wrapped ring. (::NO EXAMPLE::)
+    '''
     def __init__(self, domain : DRing_Wrapper, function : Morphism):
         if not isinstance(domain, DRing_Wrapper):
             raise TypeError("A WrappedMap can only be created for a 'DRing_Wrapper'")
@@ -2348,6 +2792,7 @@ class WrappedMap(AdditiveMap):
         self.function = function
 
     def __repr__(self) -> str:
+        r'''Magic method to represent the wrapped map. (::NO EXAMPLE::)'''
         if isinstance(self.function, RingHomomorphism_im_gens):
             im_gens = {v: im for (v,im) in zip(self.function.domain().gens(), self.function.im_gens())}
             return f"Hom({im_gens})"
@@ -2357,9 +2802,11 @@ class WrappedMap(AdditiveMap):
             return super().__repr__()
 
     def __str__(self) -> str:
+        r'''Magic method to represent the wrapped map. (::NO EXAMPLE::)'''
         return f"Wrapped [{repr(self)}] over (({self.domain()}))"
 
     def _latex_(self) -> str:
+        r'''Magic method to represent the wrapped map in LaTeX format. (::NO EXAMPLE::)'''
         if isinstance(self.function, RingHomomorphism_im_gens):
             im_gens = {v: im for (v,im) in zip(self.function.domain().gens(), self.function.im_gens())}
             return r"\sigma\left(" + r", ".join(f"{latex(v)} \\mapsto {latex(im)}" for (v,im) in im_gens.items()) + r"\right)"
@@ -2370,6 +2817,7 @@ class WrappedMap(AdditiveMap):
 
 ### SPECIAL MORPHISM FOR DFractionField
 class DFractionField_Derivation(AdditiveMap):
+    r'''Special derivation map for fields of fractions (see :class:`DerivationMap`) (::NO EXAMPLE::)'''
     def __init__(self, domain: DFractionField, operator: AdditiveMap):
         if not isinstance(domain, DFractionField):
             raise TypeError("A DFractionFieldMap can only be created for a 'DFractionField'")
@@ -2378,6 +2826,7 @@ class DFractionField_Derivation(AdditiveMap):
             raise ValueError(f"The map to be wrapped must have appropriate domain: ({domain.base()}) instead of ({operator.domain()})")
 
         def __extended_method(element):
+            r'''Auxiliary method that extends the derivation into the field of fractions (::NO EXAMPLE::)'''
             num, den = element.numerator(), element.denominator()
             assert all(el.parent() is domain.base() for el in (num, den)), "The elements must be in the base ring"
             dnum, dden = operator(num), operator(den)
@@ -2387,10 +2836,12 @@ class DFractionField_Derivation(AdditiveMap):
         self.__operator = operator
 
     def __str__(self) -> str:
+        r'''Magic method to represent the derivation map. (::NO EXAMPLE::)'''
         return f"Der. Extension to DFractionField for {self.__operator}"
 
 
 class DFractionField_Homomorphism(AdditiveMap):
+    r'''Special homomorphism map for fields of fractions (see :class:`AdditiveMap`) (::NO EXAMPLE::)'''
     def __init__(self, domain: DFractionField, operator: AdditiveMap):
         if not isinstance(domain, DFractionField):
             raise TypeError("A DFractionFieldMap can only be created for a 'DFractionField'")
@@ -2399,6 +2850,7 @@ class DFractionField_Homomorphism(AdditiveMap):
             raise ValueError(f"The map to be wrapped must have appropriate domain: ({domain.base()}) instead of ({operator.domain()})")
 
         def __extended_method(element):
+            r'''Auxiliary method that extends the homomorphism into the field of fractions (::NO EXAMPLE::)'''
             num, den = element.numerator(), element.denominator()
             assert all(el.parent() is domain.base() for el in (num, den)), "The elements must be in the base ring"
             dnum, dden = operator(num), operator(den)
@@ -2408,11 +2860,13 @@ class DFractionField_Homomorphism(AdditiveMap):
         self.__operator = operator
 
     def __str__(self) -> str:
+        r'''Magic method to represent the homomorphism map. (::NO EXAMPLE::)'''
         return f"Hom. Extension to DFractionField for {self.__operator}"
 
 
 ### SPECIAL ERRORS FOR THIS MODULE
 class IntegrationError(Exception):
+    r'''Exception for Symbolic integration errors. (::NO EXAMPLE::)'''
     pass
 
 
