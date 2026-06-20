@@ -3105,7 +3105,8 @@ class DPolynomialRing_Monoid(Parent):
 
             ::NO EXAMPLE::
         '''
-        if not self.is_differential():
+        # WARNING: Rankings not yet fully implemented for skew.
+        if not (self.is_differential() or self.is_skew()):
             raise NotImplementedError(f"Rankings only implemented for differential polynomials")
         if ordering is None:
             ordering = self.gens()
