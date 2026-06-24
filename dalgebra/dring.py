@@ -2396,7 +2396,8 @@ class DFractionField(FractionField_generic):
             elif ttype == "derivation":
                 func = DFractionField_Derivation(self, operator)
             elif ttype == "skew":
-                twist = operator.twist # this is necessary to know
+                # Change needed until __extended_skewserivation is fixed
+                twist = operator.function.twist # this is necessary to know
                 func = AdditiveMap(self, lambda p : (operator(p.numerator())*p.denominator() - p.numerator()*operator(p.denominator())) / (p.denominator() * twist(p.denominator())))
             self.__operators.append(func)
 
