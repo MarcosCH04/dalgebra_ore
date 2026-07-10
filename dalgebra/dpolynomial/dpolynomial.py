@@ -3301,8 +3301,6 @@ class DPolynomialRing_Monoid(Parent):
 
             ::NO EXAMPLE::
         '''
-        if not self.is_differential():
-            raise NotImplementedError(f"Rankings only implemented for differential polynomials")
         if ordering is None:
             ordering = self.gens()
         elif isinstance(ordering, list):
