@@ -3246,10 +3246,109 @@ class DPolynomialRing_Monoid(Parent):
         '''
         ## Checking the polynomials and ring arguments
         P,Q,gen = self.__process_sylvester_arguments(P,Q,gen)
-        return tuple(
-            sum(self.sylvester_subresultant(P,Q,gen,k,i) * gen[i] for i in range(k+1))
-            for k in range(min(P.order(gen),Q.order(gen)))
-        )
+        # return tuple(
+        #     sum(self.sylvester_subresultant(P,Q,gen,k,i) * gen[i] for i in range(k+1))
+        #     for k in range(min(P.order(gen),Q.order(gen)))
+        # )
+        Li_subresultant_sequence = self.__Li_subresultant_sequence(P,Q,gen)
+        return tuple(Li_subresultant_sequence[k] for k in sorted(Li_subresultant_sequence))
+
+    @cached_method
+    def sigma_factorial(x: Element, n: int,twist: Morphism = twist):
+        # What is x and twist?
+        if n <= 0:
+            return 1
+        return twist(sigma_factorial(x, n - 1))*x
+
+    def __Li_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen:DMonomialGen = None):
+        '''
+        Subresultant computation through Li's PRS algorithm.
+        '''
+        twist = P.parent().operators()[0].twist
+                    
+        if P.order()<0 or Q.order()<0:
+            raise NotImplementedError("Only homogeneous subresultants are considered")
+        
+        # Li does not allow P.order() < g.order(). Compromising for dalgebra.
+        if P.order() < Q.order():
+            P, Q = Q, P
+        
+        # Initialization
+        n = P.order()
+        m = Q.order()
+        l_i = n - m
+    
+        
+        # S_m and S_{m-1} from P,Q
+        S_m = sigma_factorial(twist(Q.initial()),l_i-1)*Q 
+        _, _, r_first = P.parent().ranking().pseudo_quo_rem(P, Q)
+        S_m_minus_1 = (-1)**(l_i + 1) * r_first
+        if S_m_minus_1.is_zero():
+            sres = {}
+            for i in range(Q.order()):
+                sres[i] = P.parent().zero()
+            return sres
+        sres = {m - 1: S_m_minus_1}
+        d = S_m_minus_1.order()
+        
+        # Subresultant theorem: in between are trivial.
+        for index in range(d + 1, m - 1):
+            sres[index] = P.parent().zero()
+        if d < m - 1:
+            # Subresultant theorem: next regular can be computed.
+            num = sigma_factorial(twist(S_m_minus_1.initial()), (m - d - 1))
+            den = sigma_factorial(twist(S_m.initial()), (m - d - 1))
+            # This should never have a remainder.
+            sres[d] = P.parent().base_ring()(num // den) * S_m_minus_1
+    
+        # Rest of subresultants: through last two S_1 subresultants.
+        Si, Sj = S_m, S_m_minus_1
+        # Trailing leading coefficient instead of computing subresultant.
+        Sjplus1_lc = sigma_factorial(Q.initial(), l_i)
+        for _ in range(m):
+            if Sj.is_zero():
+                for index in range(Si.order()):
+                    if index not in sres:
+                        sres[index] = 0
+                return sres
+            si, sj = Si.order(), Sj.order()
+            l_i = si - sj
+            c_i = ((-1)**(l_i + 1)) * sigma_factorial(twist(Sjplus1_lc), l_i) * Si.initial()
+            
+            _, _, r = f.parent().ranking().pseudo_quo_rem(Si, Sj)
+            
+            # Next subresultant of 1st order, subresultant theorem.
+            Sk = r // c_i    
+            
+            if Sk.is_zero():
+                for index in range(sj):
+                    if index not in sres:
+                        sres[index] = P.parent().zero()
+                return sres
+            
+            # The index of this subresultant is sj - 1
+            Sk_index = sj - 1
+            sres[Sk_index] = Sk
+            
+            d = Sk.order()
+            for index in range(d + 1, Sk_index):
+                sres[index] = P.parent().zero()
+            
+            # Compute Sjplus1_lc
+            num = sigma_factorial(Sj.initial(), l_i)
+            den = sigma_factorial(twist(Sjplus1_lc), l_i - 1)
+            new_Sjplus1_lc = P.parent().base_ring()(num // den)
+            
+            # Compute the next regular subresultant
+            if d < Sk_index: 
+                num = sigma_factorial(twist(Sk.initial()), sj - d - 1)
+                den = sigma_factorial(twist(new_Sjplus1_lc), sj - d - 1)
+                sres[d] = P.parent().base_ring()(num // den) * Sk
+            
+            # Next iteration
+            Sjplus1_lc = new_Sjplus1_lc
+            Si, Sj = Sj, Sk
+        return sres
 
     def __process_sylvester_arguments(self, P: DPolynomial, Q: DPolynomial, gen: DMonomialGen):
         r'''Check the ring, the generator and the polynomials are correct (::NO EXAMPLE::)'''
