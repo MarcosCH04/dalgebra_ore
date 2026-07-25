@@ -3204,7 +3204,8 @@ class DPolynomialRing_Monoid(Parent):
         logger.debug(f"Obtained following matrix:\n{output}")
         return output
 
-    def sylvester_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen: DMonomialGen = None) -> tuple[DPolynomial]:
+
+    def sylvester_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen: DMonomialGen = None, adjust_sign = False) -> tuple[DPolynomial]:
         r'''
             Method that gets the subresultant sequence in form of a linear d-polynomial.
 
@@ -3250,22 +3251,26 @@ class DPolynomialRing_Monoid(Parent):
         #     sum(self.sylvester_subresultant(P,Q,gen,k,i) * gen[i] for i in range(k+1))
         #     for k in range(min(P.order(gen),Q.order(gen)))
         # )
-        Li_subresultant_sequence = self.__Li_subresultant_sequence(P,Q,gen)
-        return tuple(Li_subresultant_sequence[k] for k in sorted(Li_subresultant_sequence))
 
-    @cached_method
-    def sigma_factorial(x: Element, n: int,twist: Morphism = twist):
-        # What is x and twist?
-        if n <= 0:
-            return 1
-        return twist(sigma_factorial(x, n - 1))*x
+        Li_subresultant_sequence = self.__Li_subresultant_sequence(P,Q,gen)
+
+        # No sign adjustment needed.
+        if not adjust_sign or not Li_subresultant_sequence or P.order() < Q.order():
+            return tuple(Li_subresultant_sequence[k] for k in sorted(Li_subresultant_sequence))
+        
+        p_ord, q_ord = P.order(), Q.order()
+    
+        return tuple(
+            -Li_subresultant_sequence[k] if ((p_ord - k) * (q_ord - k)) % 2 else Li_subresultant_sequence[k]
+            for k in sorted(Li_subresultant_sequence)
+        )
+
 
     def __Li_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen:DMonomialGen = None):
         '''
         Subresultant computation through Li's PRS algorithm.
         '''
-        twist = P.parent().operators()[0].twist
-                    
+        
         if P.order()<0 or Q.order()<0:
             raise NotImplementedError("Only homogeneous subresultants are considered")
         
@@ -3277,7 +3282,14 @@ class DPolynomialRing_Monoid(Parent):
         n = P.order()
         m = Q.order()
         l_i = n - m
-    
+
+        twist = P.parent().operators()[0].twist
+        @cached_method
+        def sigma_factorial(x: Element, n: int, twist = twist):
+            # Is Element good enough?
+            if n <= 0:
+                return 1
+            return twist(sigma_factorial(x, n - 1))*x
         
         # S_m and S_{m-1} from P,Q
         S_m = sigma_factorial(twist(Q.initial()),l_i-1)*Q 
@@ -3315,7 +3327,7 @@ class DPolynomialRing_Monoid(Parent):
             l_i = si - sj
             c_i = ((-1)**(l_i + 1)) * sigma_factorial(twist(Sjplus1_lc), l_i) * Si.initial()
             
-            _, _, r = f.parent().ranking().pseudo_quo_rem(Si, Sj)
+            _, _, r = P.parent().ranking().pseudo_quo_rem(Si, Sj)
             
             # Next subresultant of 1st order, subresultant theorem.
             Sk = r // c_i    
