@@ -3205,7 +3205,7 @@ class DPolynomialRing_Monoid(Parent):
         return output
 
 
-    def sylvester_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen: DMonomialGen = None, adjust_sign = False) -> tuple[DPolynomial]:
+    def sylvester_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen: DMonomialGen = None, adjust_sign: Boolean = True) -> tuple[DPolynomial]:
         r'''
             Method that gets the subresultant sequence in form of a linear d-polynomial.
 
@@ -3228,6 +3228,9 @@ class DPolynomialRing_Monoid(Parent):
             has a common right factor as linear operators.
 
             Moreover, the first non-zero element in the sequence provides a formula for the greatest right common factor.
+
+            The current implementation is based on the pseudoremainder sequence (PRS) of subresultants. The sign may vary from
+            :func:`sylvester_subresultant` when `adjust_sign` is set to `False`.
 
             EXAMPLES::
 
@@ -3257,9 +3260,9 @@ class DPolynomialRing_Monoid(Parent):
         # No sign adjustment needed.
         if not adjust_sign or not Li_subresultant_sequence or P.order() < Q.order():
             return tuple(Li_subresultant_sequence[k] for k in sorted(Li_subresultant_sequence))
-        
+
         p_ord, q_ord = P.order(), Q.order()
-    
+
         return tuple(
             -Li_subresultant_sequence[k] if ((p_ord - k) * (q_ord - k)) % 2 else Li_subresultant_sequence[k]
             for k in sorted(Li_subresultant_sequence)
@@ -3267,17 +3270,18 @@ class DPolynomialRing_Monoid(Parent):
 
 
     def __Li_subresultant_sequence(self, P: DPolynomial, Q: DPolynomial, gen:DMonomialGen = None):
+        r'''
+        Subresultant computation through Li's PRS algorithm. Output as a dictionary, coincides up to
+        sign with dalgebra implementation of Sylvester matrices. (::NO EXAMPLE::)
         '''
-        Subresultant computation through Li's PRS algorithm.
-        '''
-        
+
         if P.order()<0 or Q.order()<0:
             raise NotImplementedError("Only homogeneous subresultants are considered")
-        
+
         # Li does not allow P.order() < g.order(). Compromising for dalgebra.
         if P.order() < Q.order():
             P, Q = Q, P
-        
+
         # Initialization
         n = P.order()
         m = Q.order()
@@ -3286,13 +3290,21 @@ class DPolynomialRing_Monoid(Parent):
         twist = P.parent().operators()[0].twist
         @cached_method
         def sigma_factorial(x: Element, n: int, twist = twist):
+            r'''
+            Computing sigma factorials, with sigma as the twisting morphism.
+            .. MATH::
+
+                a^{[n]} = \prod_{i=0}^{n-1} \sigma^i(a)
+
+            (::NO EXAMPLE::)
+            '''
             # Is Element good enough?
             if n <= 0:
                 return 1
             return twist(sigma_factorial(x, n - 1))*x
-        
+
         # S_m and S_{m-1} from P,Q
-        S_m = sigma_factorial(twist(Q.initial()),l_i-1)*Q 
+        S_m = sigma_factorial(twist(Q.initial()),l_i-1)*Q
         _, _, r_first = P.parent().ranking().pseudo_quo_rem(P, Q)
         S_m_minus_1 = (-1)**(l_i + 1) * r_first
         if S_m_minus_1.is_zero():
@@ -3302,7 +3314,7 @@ class DPolynomialRing_Monoid(Parent):
             return sres
         sres = {m - 1: S_m_minus_1}
         d = S_m_minus_1.order()
-        
+
         # Subresultant theorem: in between are trivial.
         for index in range(d + 1, m - 1):
             sres[index] = P.parent().zero()
@@ -3312,7 +3324,7 @@ class DPolynomialRing_Monoid(Parent):
             den = sigma_factorial(twist(S_m.initial()), (m - d - 1))
             # This should never have a remainder.
             sres[d] = P.parent().base_ring()(num // den) * S_m_minus_1
-    
+
         # Rest of subresultants: through last two S_1 subresultants.
         Si, Sj = S_m, S_m_minus_1
         # Trailing leading coefficient instead of computing subresultant.
@@ -3326,37 +3338,37 @@ class DPolynomialRing_Monoid(Parent):
             si, sj = Si.order(), Sj.order()
             l_i = si - sj
             c_i = ((-1)**(l_i + 1)) * sigma_factorial(twist(Sjplus1_lc), l_i) * Si.initial()
-            
+
             _, _, r = P.parent().ranking().pseudo_quo_rem(Si, Sj)
-            
+
             # Next subresultant of 1st order, subresultant theorem.
-            Sk = r // c_i    
-            
+            Sk = r // c_i
+
             if Sk.is_zero():
                 for index in range(sj):
                     if index not in sres:
                         sres[index] = P.parent().zero()
                 return sres
-            
+
             # The index of this subresultant is sj - 1
             Sk_index = sj - 1
             sres[Sk_index] = Sk
-            
+
             d = Sk.order()
             for index in range(d + 1, Sk_index):
                 sres[index] = P.parent().zero()
-            
+
             # Compute Sjplus1_lc
             num = sigma_factorial(Sj.initial(), l_i)
             den = sigma_factorial(twist(Sjplus1_lc), l_i - 1)
             new_Sjplus1_lc = P.parent().base_ring()(num // den)
-            
+
             # Compute the next regular subresultant
-            if d < Sk_index: 
+            if d < Sk_index:
                 num = sigma_factorial(twist(Sk.initial()), sj - d - 1)
                 den = sigma_factorial(twist(new_Sjplus1_lc), sj - d - 1)
                 sres[d] = P.parent().base_ring()(num // den) * Sk
-            
+
             # Next iteration
             Sjplus1_lc = new_Sjplus1_lc
             Si, Sj = Sj, Sk
